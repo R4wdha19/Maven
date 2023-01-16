@@ -5,6 +5,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
@@ -89,63 +90,56 @@ public class ReadingApi {
 
 	}
 
-	public static void readStatement() {
-		String uglyJsonString = url("http://universities.hipolabs.com/search?country=United+States");
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(uglyJsonString);
-		String prettyJsonString = gson.toJson(je);
-		ColumnNamesClass[] names = gson.fromJson(prettyJsonString, ColumnNamesClass[].class);
-		for (ColumnNamesClass r : names) {
-			String webPage = r.getWeb_pages()[0];
-			String country = r.getCountry();
-			String name = r.getName();
-			String state = r.getState_province();
-			String code = r.getAlpha_two_code();
-			String domains = r.getDomins()[0];
-			String sqlQueryToRead = "SELECT * FROM ApiResults";
-			executingOfQurey(sqlQueryToRead);
+	public static void executingOfRead(String sql) {
+
+		try {
+			Statement statement = con.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			System.out.println(resultSet);
+
+			while (resultSet.next()) {
+				Integer id = resultSet.getInt("id");
+				String web_pages = resultSet.getString("web_pages");
+				String state_province = resultSet.getString("state_province");
+				String alpha_two_code = resultSet.getString("alpha_two_code");
+				String name = resultSet.getString("name");
+				String country = resultSet.getString("country");
+				String domins = resultSet.getString("domins");
+
+				System.out.println(id + " " + web_pages + " " + state_province + " " + alpha_two_code + " " + name + " "
+						+ country + " " + domins);
+			}
+
+		} catch (Exception ex) {
+
+			System.err.println(ex);
 		}
+	}
+
+	public static void readStatement() {
+		System.out.println("ID :");
+		Integer userInput = sc.nextInt();
+		String sqlQueryToRead = "SELECT * FROM ApiResults WHERE id = " + userInput;
+		executingOfRead(sqlQueryToRead);
 	}
 
 	public static void updateStatement() {
 
-		System.out.println("Enter The Id To Be Updated ");
+		System.out.println("ID :");
 		Integer userInput = sc.nextInt();
-		String uglyJsonString = url("http://universities.hipolabs.com/search?country=United+States");
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(uglyJsonString);
-		String prettyJsonString = gson.toJson(je);
-		ColumnNamesClass[] names = gson.fromJson(prettyJsonString, ColumnNamesClass[].class);
-
 		String sqlQueryToUpdate = " Update  ApiResults SET web_pages= " + newWebPage + ",state_province= " + newState
 				+ ",alpha_two_code= " + newCode + " , name= " + newName + ",country= " + newCountry + ",domins= "
-				+ newDomains + "Where Id =" + userInput;
+				+ newDomains + " Where id =" + userInput;
 		executingOfQurey(sqlQueryToUpdate);
-
 	}
 
 	public static void deleteStatement() {
-		String uglyJsonString = url("http://universities.hipolabs.com/search?country=United+States");
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		JsonParser jp = new JsonParser();
-		JsonElement je = jp.parse(uglyJsonString);
-		String prettyJsonString = gson.toJson(je);
-		ColumnNamesClass[] names = gson.fromJson(prettyJsonString, ColumnNamesClass[].class);
-		for (ColumnNamesClass r : names) {
-			String webPage = r.getWeb_pages()[0];
-			String country = r.getCountry();
-			String name = r.getName();
-			String state = r.getState_province();
-			String code = r.getAlpha_two_code();
-			String domains = r.getDomins()[0];
-			System.out.println("Please Enter The Id To Be Deleted ");
-			int idToBeDeleted = sc.nextInt();
-			String sqlQueryToDelete = "DELETE FROM ApiResults WHERE id = " + idToBeDeleted;
-			executingOfQurey(sqlQueryToDelete);
 
-		}
+		System.out.println("Please Enter The Id To Be Deleted ");
+		int idToBeDeleted = sc.nextInt();
+		String sqlQueryToDelete = "DELETE FROM ApiResults WHERE id = " + idToBeDeleted;
+		executingOfQurey(sqlQueryToDelete);
+
 	}
 
 	public static void insertStatement() {
