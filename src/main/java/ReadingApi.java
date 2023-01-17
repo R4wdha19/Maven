@@ -28,6 +28,8 @@ public class ReadingApi {
 	static String newCode = "'1001'";
 	static String newState = "'SEEB'";
 	static String newDomains = "'Something'";
+	static String region = "' Rawdha'";
+	static String common = "'Updated'";
 
 	static {
 		try {
@@ -60,14 +62,45 @@ public class ReadingApi {
 			insertIntoDummyDataTable();
 			break;
 		case 2:
-			updateStatement();
+			updateDummyDataTable();
+//			updateStatement();
 			break;
 		case 3:
-			deleteStatement();
+			deleteDummyDataTable();
+//			deleteStatement();
 			break;
 		case 4:
-			readStatement();
+			readDummyDataTable();
+//			readStatement();
 
+		}
+
+	}
+
+	public static void executingOfReadDummyData(String sql) {
+		Statement statement;
+		try {
+			statement = con.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			System.out.println(resultSet);
+			while (resultSet.next()) {
+				String cioc = resultSet.getString("cioc");
+				String region = resultSet.getString("region");
+				String startOfWeek = resultSet.getString("startOfWeek");
+				String common = resultSet.getString("common");
+				String f = resultSet.getString("f");
+				String symbol = resultSet.getString("symbol");
+				String googleMaps = resultSet.getString("googleMaps");
+				int unMember = resultSet.getInt("unMember");
+				int landlocked = resultSet.getInt("landlocked");
+				Float area = resultSet.getFloat("area");
+				System.out.println(cioc + " " + region + " " + startOfWeek + " " + common + " " + f + " " + symbol + " "
+						+ googleMaps + " " + unMember + " " + landlocked + " " + area);
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
@@ -98,6 +131,31 @@ public class ReadingApi {
 			executingOfQurey(sqlQueryToInsert);
 
 		}
+	}
+
+	public static void readDummyDataTable() {
+		System.out.println("ID :");
+		Integer userInput = sc.nextInt();
+		String sqlQueryToRead = "SELECT * FROM DummyDataFromAp WHERE id = " + userInput;
+		executingOfReadDummyData(sqlQueryToRead);
+	}
+
+	public static void updateDummyDataTable() {
+
+		System.out.println("ID :");
+		Integer userInput = sc.nextInt();
+		String sqlQueryToUpdate = " Update DummyDataFromAp SET region= " + region + ",common= " + common + " Where id ="
+				+ userInput;
+		executingOfQurey(sqlQueryToUpdate);
+	}
+
+	public static void deleteDummyDataTable() {
+
+		System.out.println("Please Enter The Id To Be Deleted ");
+		int idToBeDeleted = sc.nextInt();
+		String sqlQueryToDelete = "DELETE FROM DummyDataFromAp WHERE id = " + idToBeDeleted;
+		executingOfQurey(sqlQueryToDelete);
+
 	}
 
 	public static void executingOfQurey(String sql) {
