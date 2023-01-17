@@ -22,6 +22,12 @@ public class ReadingApi {
 	public static final String pass = "root";
 	public static Connection con;
 	static Scanner sc = new Scanner(System.in);
+	static String newWebPage = "'http://www.Rawd.ac.uk/'";
+	static String newCountry = "'OMAN'";
+	static String newName = "'RAWDHA'";
+	static String newCode = "'1001'";
+	static String newState = "'SEEB'";
+	static String newDomains = "'Something'";
 
 	static {
 		try {
@@ -39,13 +45,6 @@ public class ReadingApi {
 		}
 	}
 
-	static String newWebPage = "'http://www.Rawd.ac.uk/'";
-	static String newCountry = "'OMAN'";
-	static String newName = "'RAWDHA'";
-	static String newCode = "'1001'";
-	static String newState = "'SEEB'";
-	static String newDomains = "'Something'";
-
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Select an option");
@@ -57,7 +56,8 @@ public class ReadingApi {
 		int op = Integer.parseInt(option);
 		switch (op) {
 		case 1:
-			insertStatement();
+//			insertStatement();
+			insertIntoDummyDataTable();
 			break;
 		case 2:
 			updateStatement();
@@ -70,6 +70,34 @@ public class ReadingApi {
 
 		}
 
+	}
+
+	public static void insertIntoDummyDataTable() {
+		String uglyJsonString = url("https://restcountries.com/v3.1/all");
+
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		JsonParser jp = new JsonParser();
+		JsonElement je = jp.parse(uglyJsonString);
+		String prettyJsonString = gson.toJson(je);
+		Data[] records = gson.fromJson(prettyJsonString, Data[].class);
+		for (Data r : records) {
+			String cioc = r.getCioc();
+			String region = r.getRegion();
+			String startOfWeek = r.getStartOfWeek();
+			String common = r.getName().getCommon();
+			String f = r.getLanguages().getEng();
+			String symbol = r.getCcn3();
+			String googleMaps = r.getMaps().getGoogleMaps();
+			int unMember = r.getUnMember() == true ? 1 : 0;
+			int landlocked = r.getLandlocked() == true ? 1 : 0;
+			Float area = r.getArea();
+			String sqlQueryToInsert = " insert into DummyDataFromAp (" + "cioc," + "region, " + "startOfWeek,"
+					+ "common," + "f ," + "symbol," + "googleMaps ," + "unMember  ," + "landlocked,"
+					+ "area ) Values ('" + cioc + "','" + region + "','" + startOfWeek + "','" + common + "','" + f
+					+ "','" + symbol + "','" + googleMaps + "','" + unMember + "','" + landlocked + "'," + area + ")";
+			executingOfQurey(sqlQueryToInsert);
+
+		}
 	}
 
 	public static void executingOfQurey(String sql) {

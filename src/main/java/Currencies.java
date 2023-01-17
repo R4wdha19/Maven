@@ -1,3 +1,12 @@
 public class Currencies {
-XCD xcd;
+	XCD XCD;
+
+	public XCD getXcd() {
+		return XCD;
+	}
+
+	public void setXcd(XCD xcd) {
+		this.XCD = xcd;
+	}
+
 }
